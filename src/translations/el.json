@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Κατηγορίες Κιλών Ανδρών (χγρ), παραλείποντας την SHW",
   "meet-setup.label-classes-mx": "Μικτές Κατηγορίες Κιλών (χγρ)",
   "meet-setup.label-classes-women": "Κατηγορίες Κιλών Γυναικών (χγρ), παραλείποντας την SHW",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Μέρες αγωνισμάτων",
   "meet-setup.meet-name": "Ονομασία Διοργάνωσης",
   "meet-setup.placeholder-classes": "Γράψτε μια κατηγορία κιλών και πατήστε Enter...",

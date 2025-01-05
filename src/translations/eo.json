@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Pezaroj por viroj (kg), sen la superpeza",
   "meet-setup.label-classes-mx": "Pezaroj por riuloj (kg), sen la superpeza",
   "meet-setup.label-classes-women": "Pezaroj por virinoj (kg), sen la superpeza",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Kiom da tagoj en la konkurso?",
   "meet-setup.meet-name": "Konkurso-nomo",
   "meet-setup.placeholder-classes": "Tajpu pezaron kaj premu enenklavon...",

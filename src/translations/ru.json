@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Мужские Весовые Категории (кг), за исключением супертяжеловесов",
   "meet-setup.label-classes-mx": "Смешанные Весовые Категории (кг), за исключением супертяжеловесов",
   "meet-setup.label-classes-women": "Женские Весовые Категории (кг), за исключением супертяжеловесов",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Дни Соревнований",
   "meet-setup.meet-name": "Название Соревнований",
   "meet-setup.placeholder-classes": "Введите весовую категорию и нажмите Enter...",

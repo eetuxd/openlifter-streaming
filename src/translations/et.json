@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Meeste kaalukategooria (kg), SHW välja jätta",
   "meet-setup.label-classes-mx": "Mx kaalukategooria (kg), SHW välja jätta",
   "meet-setup.label-classes-women": "Naiste kaalukategooria (kg), SHW välja jätta",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Tõstepäevi",
   "meet-setup.meet-name": "Võistluse Nimi",
   "meet-setup.placeholder-classes": "Sisestage kaalukategooria ja vajutage sisestusklahvi Enter ...",

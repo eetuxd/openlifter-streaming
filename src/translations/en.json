@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Men's Weight Classes (kg), omit SHW",
   "meet-setup.label-classes-mx": "Mx Weight Classes (kg), omit SHW",
   "meet-setup.label-classes-women": "Women's Weight Classes (kg), omit SHW",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Days of Lifting",
   "meet-setup.meet-name": "Meet Name",
   "meet-setup.placeholder-classes": "Type a weight class and press Enter...",

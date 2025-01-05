@@ -334,12 +334,12 @@ class LiftingTable extends React.Component<Props> {
       case "Spacer2":
         return <td key={columnType} className={styles.spacerCell} />;
       case "ProjectedTotal": {
-        const totalKg = getProjectedTotalKg(entry);
+        const totalKg = getProjectedTotalKg(this.props.meet, entry);
         const asNumber = this.props.meet.inKg ? totalKg : kg2lbs(totalKg);
         return <td key={columnType}>{totalKg === 0 ? null : displayWeight(asNumber, this.props.language)}</td>;
       }
       case "ProjectedPoints": {
-        const totalKg: number = getProjectedTotalKg(entry);
+        const totalKg: number = getProjectedTotalKg(this.props.meet, entry);
         const event = entry.events.length > 0 ? entry.events[0] : "SBD";
         const points: number = getPoints(this.props.meet.formula, entry, event, totalKg, this.props.meet.inKg);
 
@@ -350,12 +350,12 @@ class LiftingTable extends React.Component<Props> {
         return <td key={columnType}>{points !== 0 ? displayPoints(points, this.props.language) : null}</td>;
       }
       case "FinalTotal": {
-        const totalKg = getFinalTotalKg(entry);
+        const totalKg = getFinalTotalKg(this.props.meet, entry);
         const asNumber = this.props.meet.inKg ? totalKg : kg2lbs(totalKg);
         return <td key={columnType}>{totalKg === 0 ? null : displayWeight(asNumber, this.props.language)}</td>;
       }
       case "FinalPoints": {
-        const totalKg: number = getFinalTotalKg(entry);
+        const totalKg: number = getFinalTotalKg(this.props.meet, entry);
         const event = entry.events.length > 0 ? entry.events[0] : "SBD";
         const points: number = getPoints(this.props.meet.formula, entry, event, totalKg, this.props.meet.inKg);
 
@@ -367,7 +367,7 @@ class LiftingTable extends React.Component<Props> {
       }
       case "Place": {
         // If the lifter has no total, then don't report a place.
-        if (getFinalTotalKg(entry) === 0) return <td key={columnType} />;
+        if (getFinalTotalKg(this.props.meet, entry) === 0) return <td key={columnType} />;
 
         // If the lifter is a guest, they cannot place, so just display the guest symbol.
         if (entry.guest) return <td key={columnType}>{getString("results.lifter-guest", this.props.language)}</td>;
@@ -576,22 +576,8 @@ class LiftingTable extends React.Component<Props> {
 
     // Calculate the Division placings for each of the lifters.
     const categoryResults = useProjected
-      ? getProjectedResults(
-          this.props.registration.entries,
-          this.props.meet.weightClassesKgMen,
-          this.props.meet.weightClassesKgWomen,
-          this.props.meet.weightClassesKgMx,
-          this.props.meet.combineSleevesAndWraps,
-          this.props.meet.combineSingleAndMulti,
-        )
-      : getFinalResults(
-          this.props.registration.entries,
-          this.props.meet.weightClassesKgMen,
-          this.props.meet.weightClassesKgWomen,
-          this.props.meet.weightClassesKgMx,
-          this.props.meet.combineSleevesAndWraps,
-          this.props.meet.combineSingleAndMulti,
-        );
+      ? getProjectedResults(this.props.registration.entries, this.props.meet)
+      : getFinalResults(this.props.registration.entries, this.props.meet);
 
     return (
       <table className={styles.liftingtable}>

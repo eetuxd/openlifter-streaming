@@ -119,14 +119,7 @@ export const exportAsUSAPLCsv = (state: GlobalState): string => {
     "Drug Test", // "Y" if a test was performed, blank otherwise.
   ];
 
-  const results: Array<CategoryResults> = getFinalResults(
-    state.registration.entries,
-    state.meet.weightClassesKgMen,
-    state.meet.weightClassesKgWomen,
-    state.meet.weightClassesKgMx,
-    state.meet.combineSleevesAndWraps,
-    state.meet.combineSingleAndMulti,
-  );
+  const results: Array<CategoryResults> = getFinalResults(state.registration.entries, state.meet);
 
   for (let i = 0; i < results.length; i++) {
     const { category, orderedEntries } = results[i];

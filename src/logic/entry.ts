@@ -20,6 +20,7 @@
 
 import { Entry, Lift, Event, FieldKg, FieldStatus } from "../types/dataTypes";
 import { checkExhausted } from "../types/utils";
+import { MeetState } from "../types/stateTypes";
 
 // Length of {squat,bench,deadlift}{Kg,Status} in each Entry.
 export const MAX_ATTEMPTS = 5;
@@ -150,13 +151,29 @@ export const getBest5DeadliftKg = (entry: Entry): number => {
   return best3DeadliftKg;
 };
 
+// Calculate entry's total based on meet's configured rounding factor, and
+// best lifts
+const sumTotal = (meetState: MeetState, best3Squat: number, best3Bench: number, best3Dead: number): number => {
+  let total = 0;
+  if (meetState.roundTotalsDown) {
+    const totalRoundingFactor = meetState.inKg ? 2.5 : 5;
+    for (const bestLift of [best3Squat, best3Bench, best3Dead]) {
+      const roundedBestLift = Math.floor(bestLift / totalRoundingFactor) * totalRoundingFactor;
+      total += roundedBestLift;
+    }
+  } else {
+    total = best3Squat + best3Bench + best3Dead;
+  }
+  return total;
+};
+
 // The ProjectedTotal optimistically assumes that lifters will get *first* attempts
 // that have not yet been taken. It is used for calculating a total while lifters
 // are still squatting and benching.
 //
 // 2nd and 3rd attempts are treated normally, where they only count toward the
 // total if they have been successful.
-export const getProjectedTotalKg = (entry: Entry): number => {
+export const getProjectedTotalKg = (meetState: MeetState, entry: Entry): number => {
   let best3Squat = 0.0;
   if (entry.squatStatus[0] >= 0) best3Squat = Math.max(best3Squat, entry.squatKg[0]);
   if (entry.squatStatus[1] > 0) best3Squat = Math.max(best3Squat, entry.squatKg[1]);
@@ -177,10 +194,10 @@ export const getProjectedTotalKg = (entry: Entry): number => {
   if (best3Bench === 0 && entry.benchStatus[0] === -1) return 0.0;
   if (best3Dead === 0 && entry.deadliftStatus[0] === -1) return 0.0;
 
-  return best3Squat + best3Bench + best3Dead;
+  return sumTotal(meetState, best3Squat, best3Bench, best3Dead);
 };
 
-export const getProjectedEventTotalKg = (entry: Entry, event: Event): number => {
+export const getProjectedEventTotalKg = (meetState: MeetState, entry: Entry, event: Event): number => {
   let best3Squat = 0.0;
   if (event.includes("S")) {
     if (entry.squatStatus[0] >= 0) best3Squat = Math.max(best3Squat, entry.squatKg[0]);
@@ -207,7 +224,7 @@ export const getProjectedEventTotalKg = (entry: Entry, event: Event): number => 
   if (best3Bench === 0 && entry.benchStatus[0] === -1) return 0.0;
   if (best3Dead === 0 && entry.deadliftStatus[0] === -1) return 0.0;
 
-  return best3Squat + best3Bench + best3Dead;
+  return sumTotal(meetState, best3Squat, best3Bench, best3Dead);
 };
 
 export const getBest3SquatKg = (entry: Entry): number => {
@@ -235,7 +252,7 @@ export const getBest3DeadliftKg = (entry: Entry): number => {
 };
 
 // The Total is the sum of best of the first 3 attempts of each lift.
-export const getFinalTotalKg = (entry: Entry): number => {
+export const getFinalTotalKg = (meetState: MeetState, entry: Entry): number => {
   const best3Squat = getBest3SquatKg(entry);
   const best3Bench = getBest3BenchKg(entry);
   const best3Dead = getBest3DeadliftKg(entry);
@@ -245,11 +262,11 @@ export const getFinalTotalKg = (entry: Entry): number => {
   if (best3Bench === 0 && entry.benchStatus[0] === -1) return 0.0;
   if (best3Dead === 0 && entry.deadliftStatus[0] === -1) return 0.0;
 
-  return best3Squat + best3Bench + best3Dead;
+  return sumTotal(meetState, best3Squat, best3Bench, best3Dead);
 };
 
 // Restricts the total calculation to just for the specified Event.
-export const getFinalEventTotalKg = (entry: Entry, event: Event): number => {
+export const getFinalEventTotalKg = (meetState: MeetState, entry: Entry, event: Event): number => {
   let best3Squat = 0.0;
   if (event.includes("S")) {
     best3Squat = getBest3SquatKg(entry);
@@ -268,7 +285,7 @@ export const getFinalEventTotalKg = (entry: Entry, event: Event): number => {
     if (best3Dead === 0) return 0.0;
   }
 
-  return best3Squat + best3Bench + best3Dead;
+  return sumTotal(meetState, best3Squat, best3Bench, best3Dead);
 };
 
 // Filter entries to only get lifters that are lifting on a given day

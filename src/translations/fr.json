@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Catégorie de poids homme (kg) excepté SHW",
   "meet-setup.label-classes-mx": "Catégorie de poids mixte (kg) excepté SHW",
   "meet-setup.label-classes-women": "Catégorie de poids femme (kg) excepté SHW",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Jour de passage",
   "meet-setup.meet-name": "Nom de la compétition",
   "meet-setup.placeholder-classes": "Entrez une catégorie de poids puis appuyez sur Entrer",

@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Вагові категорії чоловіків (кг), за викл. суперважковаговиків",
   "meet-setup.label-classes-mx": "Вагові категорії без статі (кг), за викл. суперважковаговиків",
   "meet-setup.label-classes-women": "Вагові категорії без жінок (кг), за викл. суперважковаговиків",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Днів змагань",
   "meet-setup.meet-name": "Назва змагань",
   "meet-setup.placeholder-classes": "Введіть вагову категорію та натисніть Enter...",

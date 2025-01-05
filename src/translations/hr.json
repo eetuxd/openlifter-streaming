@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Muške težinske kategorije (kg), bez superteškaša",
   "meet-setup.label-classes-mx": "Težinske kategorije ostalih spolova (kg), bez superteškaša",
   "meet-setup.label-classes-women": "Ženske težinske kategorije (kg), bez superteškašica",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Broj dana",
   "meet-setup.meet-name": "Naziv natjecanja",
   "meet-setup.placeholder-classes": "Unesi težinsku kategoriju i pritisni Enter...",

@@ -31,6 +31,7 @@ import { getAgeAdjustedPoints } from "./coefficients/coefficients";
 // Import age coefficients.
 import { checkExhausted } from "../types/utils";
 import { AgeCoefficients, Sex, Event, Equipment, Entry, Formula } from "../types/dataTypes";
+import { MeetState } from "../types/stateTypes";
 
 // Specifies a points category under which entries can be ranked together.
 export type PointsCategory = {
@@ -56,6 +57,7 @@ const keyToCategory = (key: string): PointsCategory => {
 // Returns a copy of the entries array sorted by Formula Place (Rank).
 // All entries are assumed to be part of the same category.
 const sortByFormulaPlaceInCategory = (
+  meetState: MeetState,
   entries: Array<Entry>,
   category: PointsCategory,
   formula: Formula,
@@ -74,7 +76,8 @@ const sortByFormulaPlaceInCategory = (
   const memoizedPoints = new Array(entries.length);
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
-    const totalKg = getFinalEventTotalKg(entry, category.event);
+    //TODO - pass MeetState
+    const totalKg = getFinalEventTotalKg(meetState, entry, category.event);
 
     memoizedPoints[i] = getAgeAdjustedPoints(ageCoefficients, meetDate, formula, entry, category.event, totalKg, inKg);
   }
@@ -168,6 +171,7 @@ export const sortPointsCategoryResults = (results: Array<PointsCategoryResults>)
 // The returned objects are sorted in intended order of presentation.
 export const getAllRankings = (
   entries: ReadonlyArray<Entry>,
+  meetState: MeetState,
   formula: Formula,
   ageCoefficients: AgeCoefficients,
   combineSleevesAndWraps: boolean,
@@ -211,7 +215,15 @@ export const getAllRankings = (
   const results = [];
   for (const [key, catEntries] of categoryMap) {
     const category = keyToCategory(key);
-    const orderedEntries = sortByFormulaPlaceInCategory(catEntries, category, formula, ageCoefficients, inKg, meetDate);
+    const orderedEntries = sortByFormulaPlaceInCategory(
+      meetState,
+      catEntries,
+      category,
+      formula,
+      ageCoefficients,
+      inKg,
+      meetDate,
+    );
     results.push({ category, orderedEntries });
   }
 

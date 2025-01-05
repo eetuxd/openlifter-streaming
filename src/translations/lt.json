@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Vyrų Svorio Kategorijos (kg), praleiskite sunkiasvorius",
   "meet-setup.label-classes-mx": "Trans-žmonių Svorio Kategorijos, praleiskite sunkiasvorius",
   "meet-setup.label-classes-women": "Moterų Svorio Kategorijos (kg), praleiskite sunkiasvorius",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Varžybų Trukmė Dienomis",
   "meet-setup.meet-name": "Varžybų Pavadinimas",
   "meet-setup.placeholder-classes": "Įveskite svorio kategoriją ir spauskite Enter...",

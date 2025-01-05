@@ -66,6 +66,7 @@ interface DispatchProps {
   setShowAlternateUnits: (bool: boolean) => void;
   setFormula: (event: React.BaseSyntheticEvent) => void;
   setAgeCoefficients: (event: React.BaseSyntheticEvent) => void;
+  setRoundTotalsDown: (bool: boolean) => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -109,7 +110,7 @@ class MeetSetup extends React.Component<Props, InternalState> {
     const stringMensClasses = getString("meet-setup.label-classes-men", language);
     const stringWomensClasses = getString("meet-setup.label-classes-women", language);
     const stringMxClasses = getString("meet-setup.label-classes-mx", language);
-
+    const stringTotalRounding = getString("meet-setup.label-round-attempts-in-total", language);
     const stringAH = getString("formula.ah", language);
     const stringBodyweightMultiple = getString("formula.bodyweight-multiple", language);
     const stringDots = getString("formula.dots", language);
@@ -289,6 +290,16 @@ class MeetSetup extends React.Component<Props, InternalState> {
                     no={stringNo}
                   />
                 </FormGroup>
+
+                <FormGroup>
+                  <YesNoButton
+                    label={stringTotalRounding}
+                    value={this.props.meet.roundTotalsDown}
+                    setValue={this.props.setRoundTotalsDown}
+                    yes={stringYes}
+                    no={stringNo}
+                  />
+                </FormGroup>
               </Card.Body>
             </Card>
           </Col>
@@ -313,7 +324,6 @@ class MeetSetup extends React.Component<Props, InternalState> {
                     no={stringPounds}
                   />
                 </FormGroup>
-
                 <FormGroup>
                   <YesNoButton
                     label={this.props.meet.inKg ? stringAlsoPounds : stringAlsoKilograms}
@@ -323,7 +333,6 @@ class MeetSetup extends React.Component<Props, InternalState> {
                     no={stringNo}
                   />
                 </FormGroup>
-
                 <BarAndCollarsWeightKg key={"S" + inKg} lift="S" />
                 <BarAndCollarsWeightKg key={"B" + inKg} lift="B" />
                 <BarAndCollarsWeightKg key={"D" + inKg} lift="D" />
@@ -361,6 +370,9 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
     assertString(event.currentTarget.value) &&
     assertAgeCoefficients(event.currentTarget.value) &&
     dispatch(updateMeet({ ageCoefficients: event.currentTarget.value })),
+  setRoundTotalsDown: (bool) => {
+    dispatch(updateMeet({ roundTotalsDown: bool }));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MeetSetup);

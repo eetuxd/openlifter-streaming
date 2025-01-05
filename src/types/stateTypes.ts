@@ -49,6 +49,7 @@ export type MeetState = {
   readonly combineSleevesAndWraps: boolean;
   readonly combineSingleAndMulti: boolean;
   readonly allow4thAttempts: boolean;
+  readonly roundTotalsDown: boolean;
 
   // Weights and Loading Setup.
   readonly inKg: boolean;

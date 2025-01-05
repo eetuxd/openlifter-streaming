@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Classe di peso uomini (kg), ometti SHW",
   "meet-setup.label-classes-mx": "Classe di peso Mx (kg), ometti SHW",
   "meet-setup.label-classes-women": "Classe di peso donne (kg), ometti SHW",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Giorni di Gara",
   "meet-setup.meet-name": "Nome del meet",
   "meet-setup.placeholder-classes": "Inserisci una classe di peso e premi Invio...",

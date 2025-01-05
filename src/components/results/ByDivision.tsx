@@ -40,10 +40,11 @@ import { getPoints } from "../../logic/coefficients/coefficients";
 
 import { Category, CategoryResults } from "../../logic/divisionPlace";
 import { Entry, Formula, Language, Sex } from "../../types/dataTypes";
-import { GlobalState } from "../../types/stateTypes";
+import { GlobalState, MeetState } from "../../types/stateTypes";
 import { checkExhausted } from "../../types/utils";
 
 interface StateProps {
+  meet: MeetState;
   inKg: boolean;
   showAlternateUnits: boolean;
   meetName: string;
@@ -85,7 +86,7 @@ class ByDivision extends React.Component<Props> {
 
     // Skip DQ'd lifters. Meet directors have reported that it's embarrassing
     // to the DQ'd lifter to have that projected.
-    const totalKg = getFinalEventTotalKg(entry, category.event);
+    const totalKg = getFinalEventTotalKg(this.props.meet, entry, category.event);
     if (totalKg === 0) return null;
 
     const inKg = this.props.inKg;
@@ -247,14 +248,7 @@ class ByDivision extends React.Component<Props> {
   };
 
   render() {
-    const results = getFinalResults(
-      this.props.entries,
-      this.props.weightClassesKgMen,
-      this.props.weightClassesKgWomen,
-      this.props.weightClassesKgMx,
-      this.props.combineSleevesAndWraps,
-      this.props.combineSingleAndMulti,
-    );
+    const results = getFinalResults(this.props.entries, this.props.meet);
 
     const categoryCards = [];
     for (let i = 0; i < results.length; i++) {
@@ -276,6 +270,7 @@ const mapStateToProps = (state: GlobalState, ownProps: OwnProps): StateProps => 
   }
 
   return {
+    meet: state.meet,
     inKg: state.meet.inKg,
     showAlternateUnits: state.meet.showAlternateUnits,
     meetName: state.meet.name,

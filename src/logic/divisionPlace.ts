@@ -29,6 +29,7 @@ import { getWeightClassStr } from "../reducers/meetReducer";
 
 import { Sex, Event, Equipment, Entry, Lift } from "../types/dataTypes";
 import { checkExhausted } from "../types/utils";
+import { MeetState } from "../types/stateTypes";
 
 export type Place = number | "DQ";
 
@@ -124,7 +125,12 @@ const getLastSuccessfulAttempt = (lift: Lift, entry: Entry): number => {
 
 // Returns a copy of the entries array sorted by Place.
 // All entries are assumed to be part of the same category.
-const sortByPlaceInCategory = (entries: ReadonlyArray<Entry>, category: Category, type: ResultsType): Array<Entry> => {
+const sortByPlaceInCategory = (
+  meetState: MeetState,
+  entries: ReadonlyArray<Entry>,
+  category: Category,
+  type: ResultsType,
+): Array<Entry> => {
   const event = category.event;
 
   // Clone the entries array to avoid modifying the original.
@@ -141,12 +147,12 @@ const sortByPlaceInCategory = (entries: ReadonlyArray<Entry>, category: Category
 
     // First sort by Total, higher sorting lower.
     if (type === "Projected") {
-      aTotal = getProjectedEventTotalKg(a, event);
-      const bTotal = getProjectedEventTotalKg(b, event);
+      aTotal = getProjectedEventTotalKg(meetState, a, event);
+      const bTotal = getProjectedEventTotalKg(meetState, b, event);
       if (aTotal !== bTotal) return bTotal - aTotal;
     } else if (type === "Final") {
-      aTotal = getFinalEventTotalKg(a, event);
-      const bTotal = getFinalEventTotalKg(b, event);
+      aTotal = getFinalEventTotalKg(meetState, a, event);
+      const bTotal = getFinalEventTotalKg(meetState, b, event);
       if (aTotal !== bTotal) return bTotal - aTotal;
     }
 
@@ -288,11 +294,7 @@ const mapSexToClasses = (
 // The returned objects are sorted in intended order of presentation.
 const getAllResults = (
   entries: ReadonlyArray<Entry>,
-  weightClassesKgMen: ReadonlyArray<number>,
-  weightClassesKgWomen: ReadonlyArray<number>,
-  weightClassesKgMx: ReadonlyArray<number>,
-  combineSleevesAndWraps: boolean,
-  combineSingleAndMulti: boolean,
+  meetState: MeetState,
   type: ResultsType,
 ): Array<CategoryResults> => {
   // Generate a map from category to the entries within that category.
@@ -304,14 +306,19 @@ const getAllResults = (
 
     // Remember consistent properties.
     const sex = e.sex;
-    const classesForSex = mapSexToClasses(sex, weightClassesKgMen, weightClassesKgWomen, weightClassesKgMx);
+    const classesForSex = mapSexToClasses(
+      sex,
+      meetState.weightClassesKgMen,
+      meetState.weightClassesKgWomen,
+      meetState.weightClassesKgMx,
+    );
     const weightClassStr = getWeightClassStr(classesForSex, e.bodyweightKg);
 
     // If the results combine Sleeves and Wraps, promote Sleeves to Wraps.
     let equipment = e.equipment;
-    if (combineSleevesAndWraps && equipment === "Sleeves") {
+    if (meetState.combineSleevesAndWraps && equipment === "Sleeves") {
       equipment = "Wraps";
-    } else if (combineSingleAndMulti && equipment === "Single-ply") {
+    } else if (meetState.combineSingleAndMulti && equipment === "Single-ply") {
       equipment = "Multi-ply";
     }
 
@@ -343,7 +350,7 @@ const getAllResults = (
   const results = [];
   for (const [key, catEntries] of categoryMap) {
     const category = keyToCategory(key);
-    const orderedEntries = sortByPlaceInCategory(catEntries, category, type);
+    const orderedEntries = sortByPlaceInCategory(meetState, catEntries, category, type);
     results.push({ category, orderedEntries });
   }
 
@@ -351,40 +358,10 @@ const getAllResults = (
   return results;
 };
 
-export const getProjectedResults = (
-  entries: ReadonlyArray<Entry>,
-  weightClassesKgMen: ReadonlyArray<number>,
-  weightClassesKgWomen: ReadonlyArray<number>,
-  weightClassesKgMx: ReadonlyArray<number>,
-  combineSleevesAndWraps: boolean,
-  combineSingleAndMulti: boolean,
-): Array<CategoryResults> => {
-  return getAllResults(
-    entries,
-    weightClassesKgMen,
-    weightClassesKgWomen,
-    weightClassesKgMx,
-    combineSleevesAndWraps,
-    combineSingleAndMulti,
-    "Projected",
-  );
+export const getProjectedResults = (entries: ReadonlyArray<Entry>, meetState: MeetState): Array<CategoryResults> => {
+  return getAllResults(entries, meetState, "Projected");
 };
 
-export const getFinalResults = (
-  entries: ReadonlyArray<Entry>,
-  weightClassesKgMen: ReadonlyArray<number>,
-  weightClassesKgWomen: ReadonlyArray<number>,
-  weightClassesKgMx: ReadonlyArray<number>,
-  combineSleevesAndWraps: boolean,
-  combineSingleAndMulti: boolean,
-): Array<CategoryResults> => {
-  return getAllResults(
-    entries,
-    weightClassesKgMen,
-    weightClassesKgWomen,
-    weightClassesKgMx,
-    combineSleevesAndWraps,
-    combineSingleAndMulti,
-    "Final",
-  );
+export const getFinalResults = (entries: ReadonlyArray<Entry>, meetState: MeetState): Array<CategoryResults> => {
+  return getAllResults(entries, meetState, "Final");
 };

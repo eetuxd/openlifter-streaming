@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Categorías de peso masculinas (Kg), omitiendo pesos superpesados",
   "meet-setup.label-classes-mx": "Categorías de peso mixtas (Kg), omitiendo pesos superpesados",
   "meet-setup.label-classes-women": "Categorías de peso femeninas (Kg), omitiendo pesos superpesados",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Días de competición",
   "meet-setup.meet-name": "Nombre del campeonato",
   "meet-setup.placeholder-classes": "Escriba una categoría de peso y pulse Intro...",

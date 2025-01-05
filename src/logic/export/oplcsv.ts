@@ -34,7 +34,7 @@ import {
 import { displayPoints, displayWeight, kg2lbs } from "../units";
 
 import { Category, CategoryResults } from "../divisionPlace";
-import { Entry, Equipment, Formula } from "../../types/dataTypes";
+import { Entry, Equipment } from "../../types/dataTypes";
 import { GlobalState, MeetState } from "../../types/stateTypes";
 import { checkExhausted } from "../../types/utils";
 import { releaseVersion } from "../../versions";
@@ -90,24 +90,16 @@ const standardizeEquipment = (eq: Equipment): string => {
   }
 };
 
-const addEntriesRow = (
-  csv: Csv,
-  category: Category,
-  inKg: boolean,
-  meetDate: string,
-  formula: Formula,
-  entry: Entry,
-  index: number,
-) => {
-  const unit: string = inKg ? "Kg" : "Lbs";
-  const finalEventTotalKg = getFinalEventTotalKg(entry, category.event);
+const addEntriesRow = (csv: Csv, category: Category, meetState: MeetState, entry: Entry, index: number) => {
+  const unit: string = meetState.inKg ? "Kg" : "Lbs";
+  const finalEventTotalKg = getFinalEventTotalKg(meetState, entry, category.event);
 
   // Helper functions to keep things one-liners below. Handles Kg/Lbs conversion.
   const weight = (kg: number): string => {
-    return displayWeight(inKg ? kg : kg2lbs(kg));
+    return displayWeight(meetState.inKg ? kg : kg2lbs(kg));
   };
   const wtcls = (cls: string): string => {
-    return inKg ? cls : wtclsStrKg2Lbs(cls);
+    return meetState.inKg ? cls : wtclsStrKg2Lbs(cls);
   };
 
   // Initialize an empty row with all columns available.
@@ -125,7 +117,7 @@ const addEntriesRow = (
   row[csv.index("Instagram")] = csvString(entry.instagram);
   row[csv.index("Sex")] = csvString(entry.sex);
   row[csv.index("BirthDate")] = csvDate(entry.birthDate);
-  row[csv.index("Age")] = csvString(getAge(entry, meetDate));
+  row[csv.index("Age")] = csvString(getAge(entry, meetState.date));
   row[csv.index("Country")] = csvString(entry.country);
   row[csv.index("State")] = csvString(entry.state);
   row[csv.index("Equipment")] = csvString(standardizeEquipment(entry.equipment));
@@ -165,7 +157,7 @@ const addEntriesRow = (
   }
 
   // Points. OpenPowerlifting does not use this column, but people have asked for it.
-  const points = getPoints(formula, entry, category.event, finalEventTotalKg, inKg);
+  const points = getPoints(meetState.formula, entry, category.event, finalEventTotalKg, meetState.inKg);
   row[csv.index("Points")] = csvString(points === 0 ? "" : displayPoints(points, "en"));
 
   csv.rows.push(row);
@@ -204,23 +196,13 @@ const makeEntriesCsv = (state: GlobalState): Csv => {
     ["Total" + unit, "Points", "Event", "Team"],
   );
 
-  const results: Array<CategoryResults> = getFinalResults(
-    state.registration.entries,
-    state.meet.weightClassesKgMen,
-    state.meet.weightClassesKgWomen,
-    state.meet.weightClassesKgMx,
-    state.meet.combineSleevesAndWraps,
-    state.meet.combineSingleAndMulti,
-  );
-
-  const meet_date = state.meet.date;
-  const formula: Formula = state.meet.formula;
+  const results: Array<CategoryResults> = getFinalResults(state.registration.entries, state.meet);
 
   for (let i = 0; i < results.length; i++) {
     const { category, orderedEntries } = results[i];
 
     for (let j = 0; j < orderedEntries.length; j++) {
-      addEntriesRow(csv, category, inKg, meet_date, formula, orderedEntries[j], j);
+      addEntriesRow(csv, category, state.meet, orderedEntries[j], j);
     }
   }
 

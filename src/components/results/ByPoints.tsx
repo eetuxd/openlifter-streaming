@@ -40,10 +40,11 @@ import { getAgeAdjustedPoints } from "../../logic/coefficients/coefficients";
 
 import { PointsCategory, PointsCategoryResults } from "../../logic/pointsPlace";
 import { AgeCoefficients, Entry, Formula, Language, Sex } from "../../types/dataTypes";
-import { GlobalState } from "../../types/stateTypes";
+import { GlobalState, MeetState } from "../../types/stateTypes";
 import { checkExhausted } from "../../types/utils";
 
 interface StateProps {
+  meet: MeetState;
   inKg: boolean;
   meetName: string;
   meetDate: string;
@@ -90,7 +91,7 @@ class ByPoints extends React.Component<Props> {
 
     // Skip DQ'd lifters. Meet directors have reported that it's embarrassing
     // to the DQ'd lifter to have that projected.
-    const totalKg = getFinalEventTotalKg(entry, category.event);
+    const totalKg = getFinalEventTotalKg(this.props.meet, entry, category.event);
     if (totalKg === 0) return null;
 
     const inKg = this.props.inKg;
@@ -287,6 +288,7 @@ class ByPoints extends React.Component<Props> {
 
     const results = getAllRankings(
       entries,
+      this.props.meet,
       this.props.formula,
       this.props.ageCoefficients,
       this.props.combineSleevesAndWraps,
@@ -315,6 +317,7 @@ const mapStateToProps = (state: GlobalState, ownProps: OwnProps): StateProps => 
   }
 
   return {
+    meet: state.meet,
     inKg: state.meet.inKg,
     meetName: state.meet.name,
     meetDate: state.meet.date,

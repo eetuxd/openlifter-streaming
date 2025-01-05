@@ -18,13 +18,20 @@
 
 import { getAllRankings, PointsCategoryResults, sortPointsCategoryResults } from "./pointsPlace";
 import { Entry, Equipment, Event, LiftStatus, Sex } from "../types/dataTypes";
-import { MAX_ATTEMPTS, newDefaultEntry } from "./entry";
+import { MeetState } from "../types/stateTypes";
+import meetReducer from "../reducers/meetReducer";
+import { getFinalEventTotalKg, MAX_ATTEMPTS, newDefaultEntry } from "./entry";
+import { setMeetName, updateMeet } from "../actions/meetSetupActions";
 
 const categoryFactory = (sex: Sex, event: Event, equipment: Equipment): PointsCategoryResults => {
   return {
     category: { sex, event, equipment },
     orderedEntries: [],
   };
+};
+
+const meetStateFactory = (): MeetState => {
+  return meetReducer(undefined, setMeetName("Test Meet"));
 };
 
 describe("getAllRankings", () => {
@@ -45,6 +52,7 @@ describe("getAllRankings", () => {
     };
   };
 
+  const meetState = meetStateFactory();
   const entries = [
     entryFactory("Sleeves", 0, 100, 25),
     entryFactory("Sleeves", 300, 100, 25),
@@ -55,8 +63,27 @@ describe("getAllRankings", () => {
     entryFactory("Wraps", 301, 100, 25),
   ];
 
+  it("lifter A > lifter B when lifter B's total is rounded down to lifter A's and lifter A is lighter bw", () => {
+    const entries = [entryFactory("Sleeves", 300, 99, 25), entryFactory("Sleeves", 301, 100, 25)];
+    const roundingMeetState = meetReducer(meetState, updateMeet({ roundTotalsDown: true }));
+    const rankings = getAllRankings(entries, roundingMeetState, "Total", "None", false, true, true, "2019-01-01");
+    expect(rankings).toEqual([
+      {
+        ...categoryFactory("M", "S", "Sleeves"),
+        orderedEntries: [entryFactory("Sleeves", 300, 99, 25), entryFactory("Sleeves", 301, 100, 25)],
+      },
+    ]);
+  });
+
+  it("total rounding works as expected in pounds mode", () => {
+    const entry = entryFactory("Sleeves", 804, 275, 30);
+    const roundingLbsMeetState = meetReducer(meetState, updateMeet({ roundTotalsDown: true, inKg: false }));
+    const roundedLbTotal = getFinalEventTotalKg(roundingLbsMeetState, entry, "S");
+    expect(roundedLbTotal).toEqual(800);
+  });
+
   it("get sleeves only total rankings", () => {
-    const rankings = getAllRankings(entries, "Total", "None", false, true, true, "2019-01-01");
+    const rankings = getAllRankings(entries, meetState, "Total", "None", false, true, true, "2019-01-01");
     expect(rankings).toEqual([
       {
         ...categoryFactory("M", "S", "Sleeves"),
@@ -77,7 +104,7 @@ describe("getAllRankings", () => {
   });
 
   it("get combined sleeves & wraps total rankings", () => {
-    const rankings = getAllRankings(entries, "Total", "None", true, true, true, "2019-01-01");
+    const rankings = getAllRankings(entries, meetState, "Total", "None", true, true, true, "2019-01-01");
     expect(rankings).toEqual([
       {
         ...categoryFactory("M", "S", "Wraps"),
@@ -95,7 +122,7 @@ describe("getAllRankings", () => {
   });
 
   it("get FosterMcCulloch total rankings", () => {
-    const rankings = getAllRankings(entries, "Total", "FosterMcCulloch", false, true, true, "2019-01-01");
+    const rankings = getAllRankings(entries, meetState, "Total", "FosterMcCulloch", false, true, true, "2019-01-01");
     expect(rankings).toEqual([
       {
         ...categoryFactory("M", "S", "Sleeves"),
@@ -116,7 +143,7 @@ describe("getAllRankings", () => {
   });
 
   it("get wilks rankings", () => {
-    const rankings = getAllRankings(entries, "Wilks", "None", false, true, true, "2019-01-01");
+    const rankings = getAllRankings(entries, meetState, "Wilks", "None", false, true, true, "2019-01-01");
     expect(rankings).toEqual([
       {
         ...categoryFactory("M", "S", "Sleeves"),

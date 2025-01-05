@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "男性重量级（公斤），略过无差别",
   "meet-setup.label-classes-mx": "Mx 重量级（公斤），略过无差别",
   "meet-setup.label-classes-women": "女性重量级（公斤），略过无差别",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "比赛天数",
   "meet-setup.meet-name": "比赛名",
   "meet-setup.placeholder-classes": "输入重量级，然后点击确认…",

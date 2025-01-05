@@ -167,6 +167,7 @@ strings = strings.concat([
   { id: "meet-setup.label-classes-men", defaultMessage: "Men's Weight Classes (kg), omit SHW" },
   { id: "meet-setup.label-classes-mx", defaultMessage: "Mx Weight Classes (kg), omit SHW" },
   { id: "meet-setup.label-classes-women", defaultMessage: "Women's Weight Classes (kg), omit SHW" },
+  { id: "meet-setup.label-round-attempts-in-total", defaultMessage: "Remove fractional weights from totals?" },
   { id: "meet-setup.meet-name", defaultMessage: "Meet Name" },
   { id: "meet-setup.placeholder-classes", defaultMessage: "Type a weight class and press Enter..." },
   { id: "meet-setup.plates-kg", defaultMessage: "Weight (kg)" },

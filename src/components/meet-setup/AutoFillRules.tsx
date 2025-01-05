@@ -100,6 +100,7 @@ const traditionalDefaults: Partial<MeetState> = {
   combineSleevesAndWraps: false,
   combineSingleAndMulti: false,
   allow4thAttempts: true,
+  roundTotalsDown: false,
 };
 
 const _365strongDefaults: Partial<MeetState> = {
@@ -266,6 +267,7 @@ const gpcDefaults: Partial<MeetState> = {
   combineSleevesAndWraps: true,
   combineSingleAndMulti: true,
   allow4thAttempts: true,
+  roundTotalsDown: true,
 };
 
 const rpsDefaults: Partial<MeetState> = {
@@ -1497,6 +1499,7 @@ const wpcDefaults: Partial<MeetState> = {
   combineSleevesAndWraps: true,
   combineSingleAndMulti: true,
   allow4thAttempts: true,
+  roundTotalsDown: true,
 };
 
 const wppoDefaults: Partial<MeetState> = {

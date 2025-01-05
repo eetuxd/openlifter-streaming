@@ -91,6 +91,7 @@ const initialState: MeetState = {
   benchBarAndCollarsWeightKg: defaultBarAndCollarsWeightKg,
   deadliftBarAndCollarsWeightKg: defaultBarAndCollarsWeightKg,
   plates: defaultPlatesKg,
+  roundTotalsDown: false,
 };
 
 // Given a sorted list of weight classes (in kg) and a bodyweight (in kg),
@@ -204,6 +205,7 @@ export default function meetReducer(state: MeetState = initialState, action: Act
         squatBarAndCollarsWeightKg: defaultBar,
         benchBarAndCollarsWeightKg: defaultBar,
         deadliftBarAndCollarsWeightKg: defaultBar,
+        roundTotalsDown: false,
       };
     }
 

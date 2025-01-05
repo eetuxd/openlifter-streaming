@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Categorias de Peso Masculino (kg), omitir PSP",
   "meet-setup.label-classes-mx": "Categorias de Peso Mx (kg), omitir PSP",
   "meet-setup.label-classes-women": "Categorias de Peso Feminino (kg), omitir PSP",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Dias de Levantamento",
   "meet-setup.meet-name": "Nome da Competição",
   "meet-setup.placeholder-classes": "Digite uma categoria de peso e aperte Enter...",

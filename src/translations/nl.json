@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Gewichtsklassen mannen (kg), zonder zwaargewichten",
   "meet-setup.label-classes-mx": "Gewichtsklassen Mx (kg), zonder zwaargewichten",
   "meet-setup.label-classes-women": "Gewichtsklassen vrouwen (kg), zonder zwaargewichten",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Aantal dagen dat er getild wordt",
   "meet-setup.meet-name": "Wedstrijdnaam",
   "meet-setup.placeholder-classes": "Type een gewichtsklasse en druk op enter...",

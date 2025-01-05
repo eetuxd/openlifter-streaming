@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Erkek Sikletleri (kg), Süper Ağırsiklet hariç",
   "meet-setup.label-classes-mx": "Diğer (cinsiyet) için Sikletler (kg), Süper Ağırsiklet Hariç",
   "meet-setup.label-classes-women": "Kadın Sikletleri (kg), Süper Ağırsiklet hariç",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Yarışma Gün Sayısı",
   "meet-setup.meet-name": "Yarışma İsmi",
   "meet-setup.placeholder-classes": "Bir siklet giriniz ve enter'a basınız...",

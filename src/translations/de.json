@@ -225,6 +225,7 @@
   "meet-setup.label-classes-men": "Männer Gewichtsklassen (kg), ohne offene Klasse",
   "meet-setup.label-classes-mx": "Mx Gewichtsklassen (kg), ohne offene Klasse",
   "meet-setup.label-classes-women": "Frauen Gewichtsklassen (kg), ohne offene Klasse",
+  "meet-setup.label-round-attempts-in-total": "Remove fractional weights from totals?",
   "meet-setup.length-days": "Anzahl Wettkampftage",
   "meet-setup.meet-name": "Wettkampfname",
   "meet-setup.placeholder-classes": "Geben Sie eine Gewichtsklasse ein und drücken Sie die Eingabetaste...",
