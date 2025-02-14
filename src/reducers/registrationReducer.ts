@@ -129,6 +129,20 @@ export default function registrationReducer(
       const newEntry = Object.assign({}, entries[index]);
       entries[index] = Object.assign(newEntry, changes);
 
+      //A nice little easter egg <3
+      if (
+        entries[index].sex === "M" &&
+        entries[index].name === "Matt Pearce" &&
+        entries[index].birthDate === "1994-04-18"
+      ) {
+        console.log("RIP Matt Pearce, 1994-04-18 - 2022-08-18");
+        console.log("----------------------------------------");
+        console.log("A massive contributor to the OpenPowerlifting and OpenLifter team");
+        console.log("A coder, enterer of data, a lifter, a friend, and a hell of a great human");
+        console.log("We still miss you and always will");
+        console.log("----------------------------------------");
+      }
+
       return {
         ...state,
         entries: entries,
