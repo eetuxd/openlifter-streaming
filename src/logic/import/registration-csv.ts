@@ -25,7 +25,7 @@ import { newDefaultEntry } from "../entry";
 
 import { parseInteger, parseDate } from "../parsers";
 import { getString, delocalizeEquipment, delocalizeEvent, delocalizeFlight, delocalizeSex } from "../strings";
-import { displayNumber } from "../units";
+import { displayNumber, lbs2kg } from "../units";
 
 import { Entry, Language } from "../../types/dataTypes";
 import { GlobalState } from "../../types/stateTypes";
@@ -53,8 +53,12 @@ export const makeExampleRegistrationsCsv = (language: Language): string => {
   const event3 = getString("import.column-event-n", language).replace("{N}", "3");
   const birthdate = getString("import.column-birthdate", language);
   const age = getString("import.column-age", language);
+  const bodyweight = getString("import.column-bodyweight", language);
+  const squatOpener = getString("import.column-squatOpener", language);
   const squatRackInfo = getString("import.column-squatRack", language);
+  const benchOpener = getString("import.column-benchOpener", language);
   const benchRackInfo = getString("import.column-benchRack", language);
+  const deadliftOpener = getString("import.column-deadliftOpener", language);
   const memberid = getString("import.column-memberid", language);
   const country = getString("import.column-country", language);
   const state = getString("import.column-state", language);
@@ -66,7 +70,8 @@ export const makeExampleRegistrationsCsv = (language: Language): string => {
 
   csv.appendColumns([day, platform, flight, name, sex, equipment]);
   csv.appendColumns([division1, division2, division3, event1, event2, event3]);
-  csv.appendColumns([birthdate, age, squatRackInfo, benchRackInfo, memberid, country, state]);
+  csv.appendColumns([birthdate, age, bodyweight, squatOpener, squatRackInfo, benchOpener]);
+  csv.appendColumns([benchRackInfo, deadliftOpener, memberid, country, state]);
   csv.appendColumns([lot, team, guest, instagram, notes]);
 
   csv.rows[0][csv.index(day)] = "1";
@@ -83,8 +88,12 @@ export const makeExampleRegistrationsCsv = (language: Language): string => {
   // Intentionally blank: csv.rows[0][csv.index(event3)]
   csv.rows[0][csv.index(birthdate)] = csvDate(getString("import.example-birthdate", language));
   // Intentionally blank: csv.rows[0][csv.index(age)]
+  csv.rows[0][csv.index(bodyweight)] = "66.3";
+  csv.rows[0][csv.index(squatOpener)] = "120";
   csv.rows[0][csv.index(squatRackInfo)] = "13";
+  csv.rows[0][csv.index(benchOpener)] = "50";
   csv.rows[0][csv.index(benchRackInfo)] = "7/16";
+  csv.rows[0][csv.index(deadliftOpener)] = "130";
   // Intentionally blank: csv.rows[0][csv.index(memberid)]
   csv.rows[0][csv.index(country)] = getString("import.example-country", language);
   csv.rows[0][csv.index(state)] = getString("import.example-state", language);
@@ -126,8 +135,12 @@ export const loadRegistrations = (state: GlobalState, csv: Csv, language: Langua
   const col_event5 = event_template.replace("{N}", "5");
   const col_birthdate = getString("import.column-birthdate", language);
   const col_age = getString("import.column-age", language);
+  const col_bodyweight = getString("import.column-bodyweight", language);
+  const col_squatOpener = getString("import.column-squatOpener", language);
   const col_squatRackInfo = getString("import.column-squatRack", language);
+  const col_benchOpener = getString("import.column-benchOpener", language);
   const col_benchRackInfo = getString("import.column-benchRack", language);
+  const col_deadliftOpener = getString("import.column-deadliftOpener", language);
   const col_memberid = getString("import.column-memberid", language);
   const col_country = getString("import.column-country", language);
   const col_state = getString("import.column-state", language);
@@ -159,8 +172,12 @@ export const loadRegistrations = (state: GlobalState, csv: Csv, language: Langua
     col_event5,
     col_birthdate,
     col_age,
+    col_bodyweight,
+    col_squatOpener,
     col_squatRackInfo,
+    col_benchOpener,
     col_benchRackInfo,
+    col_deadliftOpener,
     col_memberid,
     col_country,
     col_state,
@@ -436,10 +453,48 @@ export const loadRegistrations = (state: GlobalState, csv: Csv, language: Langua
           // All checks passed!
           entry.age = integer;
         }
+      } else if (fieldname === col_bodyweight) {
+        if (val !== "") {
+          const bodyweightKg = state.meet.inKg ? parseFloat(val) : lbs2kg(parseFloat(val));
+          if (isNaN(bodyweightKg) || bodyweightKg < 0) {
+            return errprefix + getString("error.csv-field-empty-or-positive-float", language);
+          }
+          entry.bodyweightKg = bodyweightKg;
+        }
+      } else if (fieldname === col_squatOpener) {
+        if (val !== "") {
+          const squatOpenerKg = state.meet.inKg ? parseFloat(val) : lbs2kg(parseFloat(val));
+          if (isNaN(squatOpenerKg) || squatOpenerKg < 0) {
+            return errprefix + getString("error.csv-field-empty-or-positive-float", language);
+          }
+          if (entry.events.filter((event) => event.includes("S")).length > 0) {
+            entry.squatKg[0] = squatOpenerKg;
+          }
+        }
       } else if (fieldname === col_squatRackInfo) {
         entry.squatRackInfo = val;
+      } else if (fieldname === col_benchOpener) {
+        if (val !== "") {
+          const benchOpenerKg = state.meet.inKg ? parseFloat(val) : lbs2kg(parseFloat(val));
+          if (isNaN(benchOpenerKg) || benchOpenerKg < 0) {
+            return errprefix + getString("error.csv-field-empty-or-positive-float", language);
+          }
+          if (entry.events.filter((event) => event.includes("B")).length > 0) {
+            entry.benchKg[0] = benchOpenerKg;
+          }
+        }
       } else if (fieldname === col_benchRackInfo) {
         entry.benchRackInfo = val;
+      } else if (fieldname === col_deadliftOpener) {
+        if (val !== "") {
+          const deadliftOpenerKg = state.meet.inKg ? parseFloat(val) : lbs2kg(parseFloat(val));
+          if (isNaN(deadliftOpenerKg) || deadliftOpenerKg < 0) {
+            return errprefix + getString("error.csv-field-empty-or-positive-float", language);
+          }
+          if (entry.events.filter((event) => event.includes("D")).length > 0) {
+            entry.deadliftKg[0] = deadliftOpenerKg;
+          }
+        }
       } else if (fieldname === col_memberid) {
         entry.memberId = val;
       } else if (fieldname === col_country) {
