@@ -19,7 +19,7 @@
 import { liftToAttemptFieldName, liftToStatusFieldName, MAX_ATTEMPTS } from "./entry";
 
 import { LiftingOrder, Entry, FieldKg, FieldStatus } from "../types/dataTypes";
-import { LiftingState } from "../types/stateTypes";
+import { LiftingState, MeetState } from "../types/stateTypes";
 
 // Helper function: for a given entry, see what attempt number would be next.
 //
@@ -296,11 +296,34 @@ const getNextEntryInfo = (
 };
 
 // Main application logic. Resolves the LiftingState to a LiftingOrder.
-export const getLiftingOrder = (entriesInFlight: Array<Entry>, lifting: LiftingState): LiftingOrder => {
+export const getLiftingOrder = (
+  entriesInFlight: Array<Entry>,
+  lifting: LiftingState,
+  meet: MeetState,
+): LiftingOrder => {
   const attemptOneIndexed = getActiveAttemptNumber(entriesInFlight, lifting);
   const orderedEntries = orderEntriesForAttempt(entriesInFlight, lifting, attemptOneIndexed);
   const currentEntryId = getCurrentEntryId(lifting, orderedEntries, attemptOneIndexed);
   const nextEntryInfo = getNextEntryInfo(lifting, currentEntryId, orderedEntries, attemptOneIndexed);
+
+  console.log(meet.name);
+  //Sending the information to API.
+  // TODO: Add state for API Url.
+  //TODO: Research what other information could be sent to API.
+  fetch("https://localhost:3001/", {
+    method: "POST",
+    body: JSON.stringify({
+      meetInfo: meet,
+      orderedEntries: orderedEntries,
+      currentEntryId: currentEntryId,
+      nextEntryId: nextEntryInfo ? nextEntryInfo.entryId : null,
+      platformDetails: lifting,
+    }),
+  })
+    .then((response) => response.json())
+    .catch((error) => {
+      console.log(error);
+    });
 
   return {
     orderedEntries: orderedEntries,

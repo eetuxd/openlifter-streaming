@@ -2,6 +2,10 @@
 
 > Simple software for running a local powerlifting competition.
 
+## This is not the official version of Openlifter. 
+
+This is a development version with added fuctionality for sharing results to live results services, live stream graphics or on venue graphics.
+
 ## Development Chat
 
 Project development is discussed in the [OpenPowerlifting Zulip Chat](https://openpl.zulipchat.com/), in the channel `#coding/openlifter`. Everyone is welcome to join.
