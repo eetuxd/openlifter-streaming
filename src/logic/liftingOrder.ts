@@ -306,11 +306,10 @@ export const getLiftingOrder = (
   const currentEntryId = getCurrentEntryId(lifting, orderedEntries, attemptOneIndexed);
   const nextEntryInfo = getNextEntryInfo(lifting, currentEntryId, orderedEntries, attemptOneIndexed);
 
-  console.log(meet.name);
   //Sending the information to API.
   // TODO: Add state for API Url.
   //TODO: Research what other information could be sent to API.
-  fetch("https://localhost:3001/", {
+  fetch("http://localhost:3001/", {
     method: "POST",
     body: JSON.stringify({
       meetInfo: meet,
