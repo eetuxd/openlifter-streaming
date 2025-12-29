@@ -1,83 +1,91 @@
 const urlParams = new URLSearchParams(window.location.search);
-const rotationTimeSeconds = parseInt(urlParams.get("rotation") || 15);
 const authRequired = JSON.parse(urlParams.get("auth") || "true");
-const entriesPerTable = parseInt(urlParams.get("entries_per_table") || 100);
-const entriesGrouping = urlParams.get("entries_grouping") || "points";
-const apiUrl = urlParams.get("apiurl") || "https://localhost:3001";
-const apiKey = urlParams.get("apikey") || "441b6244-8a4f-4e0f-8624-e5c665ecc901";
 const refreshTimeSeconds = parseInt(urlParams.get("refresh") || 1);
 
 //uncomment this to make the table english
 //var tableHeaders = ["Rank", "Lifter", "Class", /*"Body weight", "Age",*/ "Squat", "Bench", "Deadlift", "Total", "Points", "Prognosis"];
 //uncomment this to make the table finnish
-var tableHeaders = ["Nostaja", "Painoluokka", "Sarja", "Kyykky 1", "Kyykky 2", "Kyykky 3", "Penkki 1", "Penkki 2", "Penkki 3", "Maastaveto 1", "Maastaveto 2", "Maastaveto 3", "Yhteistulos","Pisteet", "Ennuste"];
+var tableHeaders = [
+  "Nostaja",
+  "Painoluokka",
+  "Sarja",
+  "Kyykky 1",
+  "Kyykky 2",
+  "Kyykky 3",
+  "Penkki 1",
+  "Penkki 2",
+  "Penkki 3",
+  "Maastaveto 1",
+  "Maastaveto 2",
+  "Maastaveto 3",
+  "Yhteistulos",
+  "Pisteet",
+  "Ennuste",
+];
 //var tableHeaders = ["Pisteet", "Nostaja", "Kyykky", "Penkki", "Maastaveto", "Yhteistulos"];
 
 //As you can see, changing what information is in the leaderboard table is quite straightforward.
 
-var inKgs = true; // default; will be updated by API response
+var inKgs = true;
 
 const femaleClasses = [
-    { max: 47, label: "-47" },
-    { max: 52, label: "-52" },
-    { max: 57, label: "-57" },
-    { max: 63, label: "-63" },
-    { max: 69, label: "-69" },
-    { max: 76, label: "-76" },
-    { max: 84, label: "-84" },
-    { max: Infinity, label: "+84" }
-  ];
+  { max: 47, label: "-47" },
+  { max: 52, label: "-52" },
+  { max: 57, label: "-57" },
+  { max: 63, label: "-63" },
+  { max: 69, label: "-69" },
+  { max: 76, label: "-76" },
+  { max: 84, label: "-84" },
+  { max: Infinity, label: "+84" },
+];
 
-  const maleClasses = [
-    { max: 59, label: "-59" },
-    { max: 66, label: "-66" },
-    { max: 74, label: "-74" },
-    { max: 83, label: "-83" },
-    { max: 93, label: "-93" },
-    { max: 105, label: "-105" },
-    { max: 120, label: "-120" },
-    { max: Infinity, label: "+120" }
-  ];
+const maleClasses = [
+  { max: 59, label: "-59" },
+  { max: 66, label: "-66" },
+  { max: 74, label: "-74" },
+  { max: 83, label: "-83" },
+  { max: 93, label: "-93" },
+  { max: 105, label: "-105" },
+  { max: 120, label: "-120" },
+  { max: Infinity, label: "+120" },
+];
 
-  const coefficients = {
-        "M": {
-          "Sleeves": {
-            "SBD": [1199.72839, 1025.18162, 0.009210],
-            "B": [320.98041, 281.40258, 0.01008]
-          },
-          "Single-ply": {
-            "SBD": [1236.25115, 1449.21864, 0.01644],
-            "B": [381.22073, 733.79378, 0.02398]
-          }
-        },
-        "F": {
-          "Sleeves": {
-            "SBD": [610.32796, 1045.59282, 0.03048],
-            "B": [142.40398, 442.52671, 0.04724]
-          },
-          "Single-ply": {
-            "SBD": [758.63878, 949.31382, 0.02435],
-            "B": [221.82209, 357.00377, 0.02937]
-          }
-        }
-      };
+const coefficients = {
+  M: {
+    Sleeves: {
+      SBD: [1199.72839, 1025.18162, 0.00921],
+      B: [320.98041, 281.40258, 0.01008],
+    },
+    "Single-ply": {
+      SBD: [1236.25115, 1449.21864, 0.01644],
+      B: [381.22073, 733.79378, 0.02398],
+    },
+  },
+  F: {
+    Sleeves: {
+      SBD: [610.32796, 1045.59282, 0.03048],
+      B: [142.40398, 442.52671, 0.04724],
+    },
+    "Single-ply": {
+      SBD: [758.63878, 949.31382, 0.02435],
+      B: [221.82209, 357.00377, 0.02937],
+    },
+  },
+};
 
-  
-function getGL(bw, total, sex, equipment){
+function getGL(bw, total, sex, equipment) {
   //Hardcoded to only work on SBD meets.
   var params = coefficients[sex][equipment]["SBD"];
-  var denom = params[0] - (params[1] * Math.exp(-1.0 * params[2] * bw))
-  var glp = (denom === 0) ? 0 : Math.max(0, total * 100.0 / denom)
+  var denom = params[0] - params[1] * Math.exp(-1.0 * params[2] * bw);
+  var glp = denom === 0 ? 0 : Math.max(0, (total * 100.0) / denom);
   if (isNaN(glp) || bw < 35) {
     glp = 0;
   }
   return glp.toFixed(2);
-
 }
 var timeInSecs;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 var ticker;
-var fetchHeaders = {};
 
 function startTimer(secs) {
   timeInSecs = parseInt(secs);
@@ -97,26 +105,24 @@ function tick() {
   }
 }
 
-  function weightClassify(bw, sex, age){
-  if(sex == 'M') {
-    //Warning: code below does not take onto account that a lifter could be 23 but not a junior. 
-    if(age <= 23 && bw <= 53){
+function weightClassify(bw, sex, age) {
+  if (sex == "M") {
+    //Warning: code below does not take onto account that a lifter could be 23 but not a junior.
+    if (age <= 23 && bw <= 53) {
       return "-53";
     }
     for (const maleClass of maleClasses) {
-    if (bw <= maleClass.max) return maleClass.label;
+      if (bw <= maleClass.max) return maleClass.label;
     }
-  }
-  else if(sex == 'F') {
-    //Warning: code below does not take onto account that a lifter could be 23 but not a junior. 
-    if(age <= 23 && bw <= 43){
+  } else if (sex == "F") {
+    //Warning: code below does not take onto account that a lifter could be 23 but not a junior.
+    if (age <= 23 && bw <= 43) {
       return "-43";
     }
     for (const femaleClass of femaleClasses) {
-    if (bw <= femaleClass.max) return femaleClass.label;
+      if (bw <= femaleClass.max) return femaleClass.label;
     }
-  }
-  else {
+  } else {
     //Rare sight
     return 0;
   }
@@ -138,8 +144,8 @@ function generateTableHead(table, headers) {
 
 function getMaxAttempt(lifts, status) {
   let max = 0;
-  for(let i = 0; i < lifts.length; i++){
-    if(lifts[i] > max && status[i] != -1){
+  for (let i = 0; i < lifts.length; i++) {
+    if (lifts[i] > max && status[i] != -1) {
       max = lifts[i];
     }
   }
@@ -148,16 +154,15 @@ function getMaxAttempt(lifts, status) {
 
 function getMaxSuccessAttempt(lifts, status) {
   let max = 0;
-  for(let i = 0; i < lifts.length; i++){
-    if(lifts[i] > max && status[i] == 1){
+  for (let i = 0; i < lifts.length; i++) {
+    if (lifts[i] > max && status[i] == 1) {
       max = lifts[i];
     }
   }
   return max;
 }
 
-function generateRows(table, weightClass = null, data, chunk) {
-  let total;
+function generateRows(table, data) {
   var rank = 1;
   let tbody = table.tBodies[0];
 
@@ -172,7 +177,7 @@ function generateRows(table, weightClass = null, data, chunk) {
         case "Rank":
         case "Sijoitus":
         case "Sijoitus ryhmän sisällä":
-          cell.textContent = rank++ ;
+          cell.textContent = rank++;
           break;
         case "Lifter":
         case "Nostaja":
@@ -208,19 +213,19 @@ function generateRows(table, weightClass = null, data, chunk) {
           break;
         case "Squat 2":
         case "Kyykky 2":
-          cell.textContent = element.squatKg[1];     
+          cell.textContent = element.squatKg[1];
           cell.classList.remove("goodLift");
-          cell.classList.remove("badLift");   
+          cell.classList.remove("badLift");
           if (element.squatStatus[1] === 1) cell.classList.add("goodLift");
-          if (element.squatStatus[1] === -1) cell.classList.add("badLift");  
+          if (element.squatStatus[1] === -1) cell.classList.add("badLift");
           break;
         case "Squat 3":
         case "Kyykky 3":
-          cell.textContent = element.squatKg[2]; 
+          cell.textContent = element.squatKg[2];
           cell.classList.remove("goodLift");
-          cell.classList.remove("badLift");  
+          cell.classList.remove("badLift");
           if (element.squatStatus[2] === 1) cell.classList.add("goodLift");
-          if (element.squatStatus[2] === -1) cell.classList.add("badLift");       
+          if (element.squatStatus[2] === -1) cell.classList.add("badLift");
           break;
         case "Bench":
         case "Penkki":
@@ -228,27 +233,27 @@ function generateRows(table, weightClass = null, data, chunk) {
           break;
         case "Bench 1":
         case "Penkki 1":
-          cell.textContent = element.benchKg[0];   
+          cell.textContent = element.benchKg[0];
           cell.classList.remove("goodLift");
           cell.classList.remove("badLift");
           if (element.benchStatus[0] === 1) cell.classList.add("goodLift");
-          if (element.benchStatus[0] === -1) cell.classList.add("badLift"); 
+          if (element.benchStatus[0] === -1) cell.classList.add("badLift");
           break;
         case "Bench 2":
         case "Penkki 2":
-          cell.textContent = element.benchKg[1];   
+          cell.textContent = element.benchKg[1];
           cell.classList.remove("goodLift");
           cell.classList.remove("badLift");
           if (element.benchStatus[1] === 1) cell.classList.add("goodLift");
-          if (element.benchStatus[1] === -1) cell.classList.add("badLift"); 
+          if (element.benchStatus[1] === -1) cell.classList.add("badLift");
           break;
         case "Bench 3":
         case "Penkki 3":
-          cell.textContent = element.benchKg[2];   
+          cell.textContent = element.benchKg[2];
           cell.classList.remove("goodLift");
           cell.classList.remove("badLift");
           if (element.benchStatus[2] === 1) cell.classList.add("goodLift");
-          if (element.benchStatus[2] === -1) cell.classList.add("badLift"); 
+          if (element.benchStatus[2] === -1) cell.classList.add("badLift");
           break;
         case "Deadlift":
         case "Maastaveto":
@@ -256,27 +261,27 @@ function generateRows(table, weightClass = null, data, chunk) {
           break;
         case "Deadlift 1":
         case "Maastaveto 1":
-          cell.textContent = element.deadliftKg[0];   
+          cell.textContent = element.deadliftKg[0];
           cell.classList.remove("goodLift");
           cell.classList.remove("badLift");
           if (element.deadliftStatus[0] === 1) cell.classList.add("goodLift");
-          if (element.deadliftStatus[0] === -1) cell.classList.add("badLift"); 
+          if (element.deadliftStatus[0] === -1) cell.classList.add("badLift");
           break;
         case "Deadlift 2":
         case "Maastaveto 2":
-          cell.textContent = element.deadliftKg[1];   
+          cell.textContent = element.deadliftKg[1];
           cell.classList.remove("goodLift");
           cell.classList.remove("badLift");
           if (element.deadliftStatus[1] === 1) cell.classList.add("goodLift");
-          if (element.deadliftStatus[1] === -1) cell.classList.add("badLift"); 
+          if (element.deadliftStatus[1] === -1) cell.classList.add("badLift");
           break;
         case "Deadlift 3":
         case "Maastaveto 3":
-          cell.textContent = element.deadliftKg[2];   
+          cell.textContent = element.deadliftKg[2];
           cell.classList.remove("goodLift");
           cell.classList.remove("badLift");
           if (element.deadliftStatus[2] === 1) cell.classList.add("goodLift");
-          if (element.deadliftStatus[2] === -1) cell.classList.add("badLift"); 
+          if (element.deadliftStatus[2] === -1) cell.classList.add("badLift");
           break;
         case "Total":
         case "Yhteistulos":
@@ -325,17 +330,13 @@ async function handleTableLoop(table, data) {
   //show lifters on the order which they will lift in
   data.orderedEntries.sort((a, b) => b.points - a.points);
 
-  table.innerHTML = ""; 
+  table.innerHTML = "";
   const newTable = document.createElement("table");
   generateTableHead(newTable, tableHeaders);
   newTable.createTBody();
   generateRows(newTable, null, data.orderedEntries);
   newTable.id = table.id;
   table.replaceWith(newTable);
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function generateTable() {
